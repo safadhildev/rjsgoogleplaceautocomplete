@@ -7,11 +7,21 @@ export default class DataService {
 
   static async getPlaces(search) {
     try {
-      return axios({
-        method: "get",
-        url: `${this.DOMAIN}&input=${search}`,
-        headers: {
-          "Content-Type": "applicatino/json",
+      return axios.get(`${this.DOMAIN}`, {
+        params: {
+          input: search,
+        },
+      });
+    } catch (e) {
+      return console.log("get places error", e);
+    }
+  }
+
+  static async getPlacesByPosition({ lat, lng }) {
+    try {
+      return axios.get(`${this.DOMAIN}`, {
+        params: {
+          location: `${lat}${lng}`,
         },
       });
     } catch (e) {

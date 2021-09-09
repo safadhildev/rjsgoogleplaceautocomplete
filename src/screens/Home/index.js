@@ -20,6 +20,7 @@ import {
   Explore,
   Inbox,
   Launch,
+  LocalAtmOutlined,
   LocationCity,
   Mail,
   Map,
@@ -31,6 +32,7 @@ import DataService from "../../services/DataService";
 import { useDispatch, useSelector } from "react-redux";
 import { placeRequest } from "../../providers/actions/Place";
 import MyDrawer from "../../components/MyDrawer";
+import MyMap from "../../components/MyMap";
 
 const drawerWidth = 280;
 const useStyles = makeStyles((theme) => ({
@@ -86,6 +88,8 @@ const Home = () => {
   const [search, setSearch] = useState("");
   const [openDrawer, setOpenDrawer] = useState(false);
   const [history, setHistory] = useState([]);
+  const [markerPosition, setMarkerPosition] = useState({ lat: 0, lng: 0 });
+  const [centerMap, setCenterMap] = useState({ lat: 0, lng: 0 });
 
   const { predictions } = useSelector((state) => ({
     predictions: state.placeReducer.data,
@@ -131,8 +135,39 @@ const Home = () => {
     if (search.length > 0) _onSearch();
   }, [search]);
 
+  const _getCurrentLocation = async () => {
+    try {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const currentPos = {
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude,
+          };
+          setMarkerPosition(currentPos);
+          setCenterMap(currentPos);
+        },
+        (err) => {
+          console.log({ err });
+        }
+      );
+    } catch (err) {
+      console.log({ err });
+    }
+  };
+
+  const _onChangeMarkerPosition = (latLng) => {
+    setMarkerPosition({
+      lat: latLng.lat(),
+      lng: latLng.lng(),
+    });
+  };
+
+  useEffect(() => {
+    _getCurrentLocation();
+  }, []);
+
   return (
-    <Grid container xs={12}>
+    <Grid container xs={12} style={{ height: "100vh" }}>
       <MyDrawer
         open={openDrawer}
         onClose={() => {
@@ -173,6 +208,39 @@ const Home = () => {
           </Grid>
         </Toolbar>
       </AppBar>
+      <Grid
+        container
+        xs={12}
+        style={{ backgroundColor: "#000", paddingTop: 80 }}
+      >
+        <div
+          style={{
+            display: "flex",
+            position: "absolute",
+            textAlign: "center",
+            zIndex: 1,
+            left: 0,
+            right: 0,
+            top: 90,
+          }}
+        >
+          <Grid xs={12} style={{ justifyContent: "center" }}>
+            <Button
+              variant="contained"
+              onClick={() => {
+                _getCurrentLocation();
+              }}
+            >
+              Pan to current location
+            </Button>
+          </Grid>
+        </div>
+        <MyMap
+          center={centerMap}
+          markerPosition={markerPosition}
+          onChangeMarkerPosition={_onChangeMarkerPosition}
+        />
+      </Grid>
     </Grid>
   );
 };
