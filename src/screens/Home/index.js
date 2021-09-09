@@ -164,6 +164,8 @@ const Home = () => {
     } catch (err) {
       setLoading(false);
       console.log({ err });
+    } finally {
+      setLoading(false);
     }
   };
 
