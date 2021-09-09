@@ -9,6 +9,7 @@ const getPlace = async (search) => {
 function* sagaGetPlace(action) {
   try {
     const response = yield call(getPlace, action.value);
+    console.log({ response });
     const { data, status } = response;
     if (status === 200) {
       yield put(placeSuccess(data.predictions));

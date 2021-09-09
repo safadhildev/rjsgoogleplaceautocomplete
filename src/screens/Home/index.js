@@ -30,26 +30,18 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import DataService from "../../services/DataService";
 import { useDispatch, useSelector } from "react-redux";
 import { placeRequest } from "../../providers/actions/Place";
+import MyDrawer from "../../components/MyDrawer";
 
 const drawerWidth = 280;
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
   },
-  drawer: {
-    [theme.breakpoints.up("sm")]: {
-      width: drawerWidth,
-      flexShrink: 0,
-    },
-  },
   appBar: { height: 80, justifyContent: "center", backgroundColor: "#212121" },
   menuButton: {},
   // necessary for content to be below app bar
   toolbar: theme.mixins.toolbar,
-  drawerPaper: {
-    width: drawerWidth,
-    backgroundColor: "#F5F5F5",
-  },
+
   content: {
     flexGrow: 1,
     padding: theme.spacing(3),
@@ -69,7 +61,6 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "flex-start",
   },
   drawerSubtitle: {
-    marginTop: 10,
     fontWeight: "bold",
   },
   itemText: {
@@ -77,69 +68,17 @@ const useStyles = makeStyles((theme) => ({
     color: "#01579B",
     flex: 1,
   },
+  clearButton: {
+    color: "#F44336",
+    fontSize: 12,
+    textTransform: "capitalize",
+    borderColor: "#F44336",
+    "&:hover": {
+      backgroundColor: "#F44336",
+      color: "#FFF",
+    },
+  },
 }));
-
-const MyDrawer = ({ open, onClose, data }) => {
-  const classes = useStyles();
-
-  return (
-    <Drawer
-      variant="temporary"
-      anchor="left"
-      open={open}
-      onClose={onClose}
-      classes={{
-        paper: classes.drawerPaper,
-      }}
-      ModalProps={{
-        keepMounted: true, // Better open performance on mobile.
-      }}
-    >
-      <ListItem>
-        <Typography variant="p" className={classes.drawerSubtitle}>
-          Places Autocomplete
-        </Typography>
-      </ListItem>
-      <Divider />
-      <div style={{ minHeight: 300 }}>
-        <ListItem>
-          <Typography variant="p" className={classes.drawerSubtitle}>
-            Recent Places
-          </Typography>
-        </ListItem>
-        <List>
-          {data?.length > 0 ? (
-            data?.map((item, index) => (
-              <ListItem
-                onClick={() => {
-                  console.log("Hello");
-                }}
-                className={classes.item}
-              >
-                <Grid
-                  container
-                  xs={12}
-                  justifyContent="space-between"
-                  alignItems="center"
-                >
-                  <Typography noWrap className={classes.itemText}>
-                    {item?.description}
-                  </Typography>
-                  <Launch />
-                </Grid>
-              </ListItem>
-            ))
-          ) : (
-            <ListItem>
-              <Typography variant="p">No Item</Typography>
-            </ListItem>
-          )}
-        </List>
-      </div>
-      <Divider />
-    </Drawer>
-  );
-};
 
 const Home = () => {
   const classes = useStyles();
@@ -152,7 +91,7 @@ const Home = () => {
     predictions: state.placeReducer.data,
   }));
 
-  const onSearch = async () => {
+  const _onSearch = async () => {
     try {
       dispatch(placeRequest(search));
     } catch (err) {
@@ -160,15 +99,26 @@ const Home = () => {
     }
   };
 
-  useEffect(() => {
-    if (search.length > 0) onSearch();
-  }, [search]);
+  const _onInputChange = (e, value) => {
+    setSearch(value);
+  };
 
-  const handleDrawerToggle = () => {
+  const _handleDrawerToggle = () => {
     setOpenDrawer(!openDrawer);
   };
 
-  const handleAutocompleteChange = (event, value) => {
+  const _onClearHistory = () => {
+    setHistory([]);
+  };
+
+  const _onSelectItem = (index) => {};
+
+  const _onRemoveItem = (index) => {
+    const newArr = history.filter((item, i) => i !== index);
+    setHistory(newArr);
+  };
+
+  const _handleAutocompleteChange = (event, value) => {
     try {
       console.log(value);
       if (value) setHistory([value, ...history]);
@@ -176,6 +126,10 @@ const Home = () => {
       console.log("Home - handleAutocompleteChange - error ", err);
     }
   };
+
+  useEffect(() => {
+    if (search.length > 0) _onSearch();
+  }, [search]);
 
   return (
     <Grid container xs={12}>
@@ -185,6 +139,9 @@ const Home = () => {
           setOpenDrawer(false);
         }}
         data={history}
+        onClearHistory={_onClearHistory}
+        onRemoveItem={_onRemoveItem}
+        onSelectItem={_onSelectItem}
       />
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
@@ -192,7 +149,7 @@ const Home = () => {
             color="inherit"
             aria-label="open drawer"
             edge="start"
-            onClick={handleDrawerToggle}
+            onClick={_handleDrawerToggle}
             className={classes.menuButton}
           >
             <MenuIcon />
@@ -210,10 +167,8 @@ const Home = () => {
                   className={classes.input}
                 />
               )}
-              onInputChange={(e, value) => {
-                setSearch(value);
-              }}
-              onChange={handleAutocompleteChange}
+              onInputChange={_onInputChange}
+              onChange={_handleAutocompleteChange}
             />
           </Grid>
         </Toolbar>
