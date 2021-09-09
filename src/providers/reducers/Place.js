@@ -1,10 +1,10 @@
-import {actions} from '../actions/Place';
+import { actions } from "../actions/Place";
 
 const initialState = {
   loading: false,
   success: false,
   errors: {},
-  data: null,
+  data: [],
 };
 
 const placeReducer = (state = initialState, action) => {
@@ -30,7 +30,7 @@ const placeReducer = (state = initialState, action) => {
         errors: action.payload,
       };
     case actions.RESET:
-      return {...initialState};
+      return { ...initialState };
     default:
       return state;
   }

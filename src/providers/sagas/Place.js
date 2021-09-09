@@ -1,22 +1,25 @@
-import {all, put, takeLatest, call, select, take} from 'redux-saga/effects';
-import DataService from '../../services/DataService';
-import {actions, placeError, placeSuccess} from '../actions/Place';
+import { all, put, takeLatest, call, select, take } from "redux-saga/effects";
+import DataService from "../../services/DataService";
+import { actions, placeError, placeSuccess } from "../actions/Place";
 
-const getPlace = async (relativeId, articleId) => {
-  console.log('getPlace =>', {relativeId}, {articleId});
-  return DataService.getData(`?libraries=""`);
+const getPlace = async (search) => {
+  console.log("getPlace =>", search);
+  return DataService.getPlaces(search);
 };
 
 function* sagaGetPlace(action) {
+  console.log({ action });
   try {
-    const response = yield call(getPlace);
-    const {data} = yield call(response.json(), response);
-    yield put(placeSuccess(data));
+    const response = yield call(getPlace, action.value);
+    const { data, status } = response;
+    if (status === 200) {
+      yield put(placeSuccess(data.predictions));
+    }
   } catch (e) {
     yield put(
       placeError({
         name: `Error :: ${e}`,
-      }),
+      })
     );
   }
 }

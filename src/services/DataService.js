@@ -1,29 +1,22 @@
-const API_URL = process.env.REACT_APP_API_URL;
+import axios from "axios";
+const AUTOCOMPLETE_URL = process.env.REACT_APP_API_AUTOCOMPLETE_URL;
 const API_KEY = process.env.REACT_APP_API_KEY;
 
 export default class DataService {
-  static DOMAIN = `${API_URL}?key=${API_KEY}`;
+  static DOMAIN = `${AUTOCOMPLETE_URL}?key=${API_KEY}`;
 
-  static async getData(url, data) {
+  static async getPlaces(search) {
     try {
-      //   const headers = {
-      //     Authorization: `Bearer ${await AuthService.getAccessToken()}`,
-      //     'x-api-key': `${API_KEY}`,
-      //   };
-      const _url = this.DOMAIN + url;
-      if (data) {
-        return fetch(_url, {
-          method: "GET",
-          body: JSON.stringify(data),
-          //   headers,
-        });
-      }
-      return fetch(_url, {
-        method: "GET",
-        // headers,
+      console.log("DD :: ", search);
+      return axios({
+        method: "get",
+        url: `${this.DOMAIN}&input=${search}`,
+        headers: {
+          "Content-Type": "applicatino/json",
+        },
       });
     } catch (e) {
-      return console.log("get data error", e);
+      return console.log("get places error", e);
     }
   }
 }
