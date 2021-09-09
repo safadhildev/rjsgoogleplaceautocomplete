@@ -1,18 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   Button,
-  Card,
   Divider,
   Drawer,
-  Grid,
   IconButton,
   List,
   ListItem,
   makeStyles,
   Typography,
 } from "@material-ui/core";
-import { Close, Menu as MenuIcon } from "@material-ui/icons";
-import { stopBubbling } from "../../services/util";
+import { Close, Menu } from "@material-ui/icons";
 
 const drawerWidth = 380;
 const mobileWidth = 280;
@@ -22,15 +19,23 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#FFF",
     // backgroundColor: "transparent",
     boxShadow: "none",
-    margin: "5px",
-    height: window.innerHeight - 10,
+    margin: "10px",
+    height: window.innerHeight - 20,
     borderRadius: 10,
     paddingLeft: 20,
     paddingRight: 20,
     [theme.breakpoints.down("xs")]: {
       width: mobileWidth,
       flexShrink: 0,
+      paddingLeft: 10,
+      paddingRight: 10,
     },
+  },
+  drawerWrapper: {
+    display: "flex",
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "flex-start",
   },
   drawerSubtitle: {
     fontWeight: "bold",
@@ -116,17 +121,10 @@ const MyDrawer = ({
         paper: classes.drawerPaper,
       }}
       ModalProps={{
-        keepMounted: true, // Better open performance on mobile.
+        keepMounted: true,
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          flex: 1,
-          flexDirection: "column",
-          justifyContent: "flex-start",
-        }}
-      >
+      <div className={classes.drawerWrapper}>
         <div
           style={{ margin: "20px 0", display: "flex", flexDirection: "column" }}
         >

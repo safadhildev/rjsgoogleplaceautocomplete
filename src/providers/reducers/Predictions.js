@@ -1,31 +1,27 @@
-import { actions } from "../actions/Place";
+import { actions } from "../actions/Predictions";
 
 const initialState = {
-  loading: false,
   success: false,
   errors: {},
   data: [],
 };
 
-const placeReducer = (state = initialState, action) => {
+const predictionsReducer = (state = initialState, action) => {
   switch (action.type) {
-    case actions.PLACE.REQUEST:
+    case actions.PREDICTIONS.REQUEST:
       return {
         ...state,
-        loading: true,
         errors: {},
       };
-    case actions.PLACE.SUCCESS:
+    case actions.PREDICTIONS.SUCCESS:
       return {
         ...state,
-        loading: true,
         success: true,
         data: action.payload,
       };
-    case actions.PLACE.ERROR:
+    case actions.PREDICTIONS.ERROR:
       return {
         ...state,
-        loading: false,
         success: false,
         errors: action.payload,
       };
@@ -36,4 +32,4 @@ const placeReducer = (state = initialState, action) => {
   }
 };
 
-export default placeReducer;
+export default predictionsReducer;

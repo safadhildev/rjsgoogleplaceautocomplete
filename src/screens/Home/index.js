@@ -1,19 +1,10 @@
 import React, { useEffect, useState } from "react";
-import {
-  AppBar,
-  CircularProgress,
-  Grid,
-  IconButton,
-  makeStyles,
-  TextField,
-  Toolbar,
-} from "@material-ui/core";
-import { Menu as MenuIcon } from "@material-ui/icons";
-import Autocomplete from "@material-ui/lab/Autocomplete";
+import { CircularProgress, Grid, makeStyles } from "@material-ui/core";
 import DataService from "../../services/DataService";
 import { useDispatch, useSelector } from "react-redux";
-import { placeRequest } from "../../providers/actions/Place";
+import { predictionsRequest } from "../../providers/actions/Predictions";
 import { MyAppBar, MyDrawer, MyMap } from "../../components";
+import { geocodeRequest } from "../../providers/actions/Geocode";
 
 const appBarHeight = 60;
 const useStyles = makeStyles((theme) => ({
@@ -59,13 +50,14 @@ const Home = () => {
   const [centerMap, setCenterMap] = useState({ lat: 0, lng: 0 });
   const [loading, setLoading] = useState(false);
 
-  const { predictions } = useSelector((state) => ({
-    predictions: state.placeReducer.data,
+  const { predictions, location } = useSelector((state) => ({
+    predictions: state.predictionsReducer.data,
+    location: state.geocodeReducer.data,
   }));
 
   const _onSearch = async () => {
     try {
-      dispatch(placeRequest(search));
+      dispatch(predictionsRequest(search));
     } catch (err) {
       console.log("Home - onSearch - error :: ", err);
     }
@@ -73,14 +65,8 @@ const Home = () => {
 
   const _onSearchGeocode = async (item) => {
     try {
-      const res = await DataService.getPlaceLocation(item.place_id);
-      console.log({ res });
-      if (res.status === 200) {
-        const { geometry } = res?.data?.results[0];
-        console.log(geometry);
-        setCenterMap(geometry.location);
-        setMarkerPosition(geometry.location);
-      }
+      console.log({ item });
+      dispatch(geocodeRequest(item.place_id));
     } catch (error) {
       console.log("Home - onSearchGeocode - error :: ", error);
     }
@@ -109,8 +95,7 @@ const Home = () => {
     setHistory([]);
   };
 
-  const _onSelectItem = (index) => {
-    const item = history[index];
+  const _onSelectItem = (item) => {
     _onSearchGeocode(item);
     _handleDrawerToggle();
   };
@@ -119,11 +104,6 @@ const Home = () => {
     const newArr = history.filter((item, i) => i !== index);
     setHistory(newArr);
   };
-
-  useEffect(() => {
-    if (search.length > 0) _onSearch();
-  }, [search]);
-
   const _handleGetCurrentLocation = (event) => {
     const currentPosition = {
       lat: event.coords.latitude,
@@ -153,6 +133,15 @@ const Home = () => {
       lng: latLng.lng(),
     });
   };
+
+  useEffect(() => {
+    setMarkerPosition(location);
+    setCenterMap(location);
+  }, [location]);
+
+  useEffect(() => {
+    if (search.length > 0) _onSearch();
+  }, [search]);
 
   useEffect(() => {
     _onGetCurrentLocation();
@@ -199,24 +188,6 @@ const Home = () => {
             <CircularProgress color="primary" />
           </div>
         )}
-        {/* <div
-          style={{
-            position: "absolute",
-            zIndex: 1,
-            top: appBarHeight + 50,
-            left: 10,
-          }}
-        >
-          <IconButton
-            variant="contained"
-            onClick={() => {
-              _onGetCurrentLocation();
-            }}
-            className={classes.locationButton}
-          >
-            <MyLocation />
-          </IconButton>
-        </div> */}
         <MyMap
           center={centerMap}
           markerPosition={markerPosition}

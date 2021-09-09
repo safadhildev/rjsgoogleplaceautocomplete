@@ -14,7 +14,7 @@ import { Menu as MenuIcon } from "@material-ui/icons";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import DataService from "../../services/DataService";
 import { useDispatch, useSelector } from "react-redux";
-import { placeRequest } from "../../providers/actions/Place";
+import { placeRequest } from "../../providers/actions/Predictions";
 import { MyDrawer, MyMap } from "../../components";
 
 const appBarHeight = 60;
@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "transparent",
     boxShadow: "none",
   },
-  notchedOutline: { border: "none" },
+
   menuButton: {
     backgroundColor: "#FFF",
     width: 40,
@@ -41,30 +41,14 @@ const useStyles = makeStyles((theme) => ({
   },
   toolbar: theme.mixins.toolbar,
   autocompleteInput: {
-    width: "100%",
     textAlign: "center",
-    "&:focus": {
-      borderColor: "#000",
-    },
-  },
-  inputWrapper: {
     backgroundColor: "#FFF",
     borderRadius: 20,
-    width: "50%",
-    padding: "5px 10px",
-    [theme.breakpoints.down("md")]: {
-      width: "90%",
-    },
-  },
-  input: {
-    borderRadius: 20,
-    width: "100%",
-    backgroundColor: "#FFF",
-    padding: "0 10px",
-    [theme.breakpoints.down("md")]: {
-      width: "100%",
-    },
+    padding: "5px 20px",
     boxShadow: "0px 1px 10px #888888",
+    [theme.breakpoints.down("xs")]: {
+      margin: "0 0 0 30px",
+    },
   },
   locationButton: {
     backgroundColor: "#FFF",
@@ -76,37 +60,35 @@ const MyAppBar = ({ onClickIcon, predictions, onInputChange, onChange }) => {
   return (
     <AppBar position="fixed" className={classes.appBar}>
       <Toolbar>
-        <IconButton
-          edge="start"
-          onClick={onClickIcon}
-          className={classes.menuButton}
-        >
-          <MenuIcon />
-        </IconButton>
-        <Grid container xs={12}>
-          <Autocomplete
-            freeSolo
-            options={predictions}
-            getOptionLabel={(option) => option.description}
-            className={classes.autocompleteInput}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                variant="outlined"
-                placeholder="Search Places"
-                size="small"
-                InputProps={{
-                  classes: {
-                    root: classes.input,
-                    notchedOutline: classes.notchedOutline,
-                    focused: classes.focused,
-                  },
-                }}
-              />
-            )}
-            onInputChange={onInputChange}
-            onChange={onChange}
-          />
+        <Grid container direction="row" justifyContent="flex-start">
+          <Grid item xs={1}>
+            <IconButton
+              edge="start"
+              onClick={onClickIcon}
+              className={classes.menuButton}
+            >
+              <MenuIcon />
+            </IconButton>
+          </Grid>
+          <Grid item xs={11} md={6}>
+            <Autocomplete
+              freeSolo
+              options={predictions}
+              getOptionLabel={(option) => option.description}
+              className={classes.autocompleteInput}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  variant="standard"
+                  placeholder="Search Places"
+                  size="small"
+                  className={classes.input}
+                />
+              )}
+              onInputChange={onInputChange}
+              onChange={onChange}
+            />
+          </Grid>
         </Grid>
       </Toolbar>
     </AppBar>

@@ -1,4 +1,5 @@
 import { combineReducers } from "redux";
-import placeReducer from "./Place";
+import predictionsReducer from "./Predictions";
+import geocodeReducer from "./Geocode";
 
-export default combineReducers({ placeReducer });
+export default combineReducers({ predictionsReducer, geocodeReducer });

@@ -6,8 +6,9 @@ const PLACE_URL = process.env.REACT_APP_API_PLACE_URL;
 const API_KEY = process.env.REACT_APP_API_KEY;
 
 export default class DataService {
-  static async getPlaces(search) {
+  static async getPredictions(search) {
     try {
+      axios.defaults.headers.common["X-Requested-with"] = "XMLHttpRequest";
       return axios.get(
         `https://cors-anywhere.herokuapp.com/${AUTOCOMPLETE_URL}?key=${API_KEY}`,
         {
@@ -21,14 +22,17 @@ export default class DataService {
     }
   }
 
-  static async getPlaceLocation(id) {
-    console.log({ id });
+  static async getLocationById(id) {
+    axios.defaults.headers.common["X-Requested-with"] = "XMLHttpRequest";
     try {
-      return axios.get(`${GEOCODE_URL}?key=${API_KEY}`, {
-        params: {
-          place_id: id,
-        },
-      });
+      return axios.get(
+        `https://cors-anywhere.herokuapp.com/${GEOCODE_URL}?key=${API_KEY}`,
+        {
+          params: {
+            place_id: id,
+          },
+        }
+      );
     } catch (err) {
       return console.log("get place by location :: ", err);
     }
