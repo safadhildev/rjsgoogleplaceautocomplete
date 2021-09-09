@@ -35,11 +35,16 @@ import MyDrawer from "../../components/MyDrawer";
 import MyMap from "../../components/MyMap";
 
 const drawerWidth = 280;
+const appBarHeight = 60;
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
   },
-  appBar: { height: 80, justifyContent: "center", backgroundColor: "#212121" },
+  appBar: {
+    height: appBarHeight,
+    justifyContent: "center",
+    backgroundColor: "#212121",
+  },
   menuButton: {},
   // necessary for content to be below app bar
   toolbar: theme.mixins.toolbar,
@@ -56,29 +61,6 @@ const useStyles = makeStyles((theme) => ({
     border: "none",
     borderRadius: 5,
     width: "100%",
-  },
-  item: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "flex-start",
-  },
-  drawerSubtitle: {
-    fontWeight: "bold",
-  },
-  itemText: {
-    fontSize: 14,
-    color: "#01579B",
-    flex: 1,
-  },
-  clearButton: {
-    color: "#F44336",
-    fontSize: 12,
-    textTransform: "capitalize",
-    borderColor: "#F44336",
-    "&:hover": {
-      backgroundColor: "#F44336",
-      color: "#FFF",
-    },
   },
 }));
 
@@ -103,6 +85,32 @@ const Home = () => {
     }
   };
 
+  const _onSearchGeocode = async (item) => {
+    try {
+      const res = await DataService.getPlaceLocation(item.place_id);
+      console.log({ res });
+      if (res.status === 200) {
+        const { geometry } = res?.data?.results[0];
+        console.log(geometry);
+        setCenterMap(geometry.location);
+        setMarkerPosition(geometry.location);
+      }
+    } catch (error) {
+      console.log("Home - onSearchGeocode - error :: ", error);
+    }
+  };
+
+  const _onChange = async (event, item) => {
+    try {
+      if (item) {
+        setHistory([item, ...history]);
+        _onSearchGeocode(item);
+      }
+    } catch (err) {
+      console.log("Home - handleAutocompleteChange - error ", err);
+    }
+  };
+
   const _onInputChange = (e, value) => {
     setSearch(value);
   };
@@ -115,20 +123,15 @@ const Home = () => {
     setHistory([]);
   };
 
-  const _onSelectItem = (index) => {};
+  const _onSelectItem = (index) => {
+    const item = history[index];
+    _onSearchGeocode(item);
+    _handleDrawerToggle();
+  };
 
   const _onRemoveItem = (index) => {
     const newArr = history.filter((item, i) => i !== index);
     setHistory(newArr);
-  };
-
-  const _handleAutocompleteChange = (event, value) => {
-    try {
-      console.log(value);
-      if (value) setHistory([value, ...history]);
-    } catch (err) {
-      console.log("Home - handleAutocompleteChange - error ", err);
-    }
   };
 
   useEffect(() => {
@@ -200,10 +203,11 @@ const Home = () => {
                   placeholder="Search Places"
                   variant="outlined"
                   className={classes.input}
+                  size="small"
                 />
               )}
               onInputChange={_onInputChange}
-              onChange={_handleAutocompleteChange}
+              onChange={_onChange}
             />
           </Grid>
         </Toolbar>
@@ -211,7 +215,7 @@ const Home = () => {
       <Grid
         container
         xs={12}
-        style={{ backgroundColor: "#000", paddingTop: 80 }}
+        style={{ backgroundColor: "#000", paddingTop: appBarHeight }}
       >
         <div
           style={{
@@ -221,7 +225,7 @@ const Home = () => {
             zIndex: 1,
             left: 0,
             right: 0,
-            top: 90,
+            top: appBarHeight + 10,
           }}
         >
           <Grid xs={12} style={{ justifyContent: "center" }}>
