@@ -7,7 +7,6 @@ export default class DataService {
 
   static async getPlaces(search) {
     try {
-      console.log("DD :: ", search);
       return axios({
         method: "get",
         url: `${this.DOMAIN}&input=${search}`,

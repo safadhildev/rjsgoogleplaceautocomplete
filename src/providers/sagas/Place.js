@@ -3,12 +3,10 @@ import DataService from "../../services/DataService";
 import { actions, placeError, placeSuccess } from "../actions/Place";
 
 const getPlace = async (search) => {
-  console.log("getPlace =>", search);
   return DataService.getPlaces(search);
 };
 
 function* sagaGetPlace(action) {
-  console.log({ action });
   try {
     const response = yield call(getPlace, action.value);
     const { data, status } = response;
