@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   AppBar,
   Button,
+  CircularProgress,
   Divider,
   Drawer,
   Grid,
@@ -25,6 +26,7 @@ import {
   Mail,
   Map,
   Menu as MenuIcon,
+  MyLocation,
   Room,
 } from "@material-ui/icons";
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -46,21 +48,26 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#212121",
   },
   menuButton: {},
-  // necessary for content to be below app bar
   toolbar: theme.mixins.toolbar,
-
   content: {
     flexGrow: 1,
     padding: theme.spacing(3),
   },
   autocompleteInput: {
     width: "100%",
+    textAlign: "center",
   },
   input: {
     backgroundColor: "#FFF",
     border: "none",
     borderRadius: 5,
-    width: "100%",
+    width: "50%",
+    [theme.breakpoints.down("md")]: {
+      width: "90%",
+    },
+  },
+  locationButton: {
+    backgroundColor: "#FFF",
   },
 }));
 
@@ -72,6 +79,7 @@ const Home = () => {
   const [history, setHistory] = useState([]);
   const [markerPosition, setMarkerPosition] = useState({ lat: 0, lng: 0 });
   const [centerMap, setCenterMap] = useState({ lat: 0, lng: 0 });
+  const [loading, setLoading] = useState(false);
 
   const { predictions } = useSelector((state) => ({
     predictions: state.placeReducer.data,
@@ -138,22 +146,23 @@ const Home = () => {
     if (search.length > 0) _onSearch();
   }, [search]);
 
-  const _getCurrentLocation = async () => {
+  const _handleGetCurrentLocation = (event) => {
+    const currentPosition = {
+      lat: event.coords.latitude,
+      lng: event.coords.longitude,
+    };
+    setMarkerPosition(currentPosition);
+    setCenterMap(currentPosition);
+
+    setLoading(false);
+  };
+
+  const _onGetCurrentLocation = async () => {
     try {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const currentPos = {
-            lat: pos.coords.latitude,
-            lng: pos.coords.longitude,
-          };
-          setMarkerPosition(currentPos);
-          setCenterMap(currentPos);
-        },
-        (err) => {
-          console.log({ err });
-        }
-      );
+      setLoading(true);
+      navigator.geolocation.getCurrentPosition(_handleGetCurrentLocation);
     } catch (err) {
+      setLoading(false);
       console.log({ err });
     }
   };
@@ -166,7 +175,7 @@ const Home = () => {
   };
 
   useEffect(() => {
-    _getCurrentLocation();
+    _onGetCurrentLocation();
   }, []);
 
   return (
@@ -180,6 +189,10 @@ const Home = () => {
         onClearHistory={_onClearHistory}
         onRemoveItem={_onRemoveItem}
         onSelectItem={_onSelectItem}
+        onGetCurrentLocation={() => {
+          _onGetCurrentLocation();
+          _handleDrawerToggle();
+        }}
       />
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
@@ -217,28 +230,42 @@ const Home = () => {
         xs={12}
         style={{ backgroundColor: "#000", paddingTop: appBarHeight }}
       >
-        <div
+        {loading && (
+          <div
+            style={{
+              display: "flex",
+              position: "absolute",
+              top: appBarHeight,
+              bottom: 0,
+              left: 0,
+              right: 0,
+              zIndex: 2,
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: "rgba(250, 250, 250,0.5)",
+            }}
+          >
+            <CircularProgress color="primary" />
+          </div>
+        )}
+        {/* <div
           style={{
-            display: "flex",
             position: "absolute",
-            textAlign: "center",
             zIndex: 1,
-            left: 0,
-            right: 0,
-            top: appBarHeight + 10,
+            top: appBarHeight + 50,
+            left: 10,
           }}
         >
-          <Grid xs={12} style={{ justifyContent: "center" }}>
-            <Button
-              variant="contained"
-              onClick={() => {
-                _getCurrentLocation();
-              }}
-            >
-              Pan to current location
-            </Button>
-          </Grid>
-        </div>
+          <IconButton
+            variant="contained"
+            onClick={() => {
+              _onGetCurrentLocation();
+            }}
+            className={classes.locationButton}
+          >
+            <MyLocation />
+          </IconButton>
+        </div> */}
         <MyMap
           center={centerMap}
           markerPosition={markerPosition}

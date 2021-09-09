@@ -63,6 +63,15 @@ const useStyles = makeStyles((theme) => ({
     color: "#9E9E9E",
     fontSize: 14,
   },
+  locationButton: {
+    background: "#212121",
+    color: "#FFF",
+    textTransform: "capitalize",
+    "&:hover": {
+      background: "#212121",
+      color: "#FFF",
+    },
+  },
 }));
 
 const MyDrawer = ({
@@ -72,6 +81,7 @@ const MyDrawer = ({
   onClearHistory,
   onRemoveItem,
   onSelectItem,
+  onGetCurrentLocation,
 }) => {
   const classes = useStyles();
 
@@ -93,6 +103,7 @@ const MyDrawer = ({
           Places Autocomplete
         </Typography>
       </ListItem>
+
       <Divider />
       <div style={{ minHeight: 300 }}>
         <ListItem
