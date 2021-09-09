@@ -13,6 +13,13 @@ const containerStyle = {
   height: "100%",
 };
 
+const defaultOptions = {
+  fullscreenControl: false,
+  disableDefaultUI: false,
+  mapTypeControl: false,
+  gestureHandling: "cooperative",
+};
+
 const MyMap = ({ center, markerPosition, onChangeMarkerPosition }) => {
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
@@ -41,13 +48,14 @@ const MyMap = ({ center, markerPosition, onChangeMarkerPosition }) => {
         <GoogleMap
           mapContainerStyle={containerStyle}
           center={center}
-          zoom={10}
+          zoom={3}
           onLoad={onLoad}
           onUnmount={onUnmount}
           clickableIcons
           onClick={({ latLng }) => {
             onChangeMarkerPosition(latLng);
           }}
+          options={defaultOptions}
         >
           {/* Child components, such as markers, info windows, etc. */}
           <>

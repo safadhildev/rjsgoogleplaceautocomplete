@@ -1,42 +1,20 @@
 import React, { useEffect, useState } from "react";
 import {
   AppBar,
-  Button,
   CircularProgress,
-  Divider,
-  Drawer,
   Grid,
   IconButton,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
   makeStyles,
   TextField,
   Toolbar,
-  Typography,
 } from "@material-ui/core";
-import {
-  Close,
-  Explore,
-  Inbox,
-  Launch,
-  LocalAtmOutlined,
-  LocationCity,
-  Mail,
-  Map,
-  Menu as MenuIcon,
-  MyLocation,
-  Room,
-} from "@material-ui/icons";
+import { Menu as MenuIcon } from "@material-ui/icons";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import DataService from "../../services/DataService";
 import { useDispatch, useSelector } from "react-redux";
 import { placeRequest } from "../../providers/actions/Place";
-import MyDrawer from "../../components/MyDrawer";
-import MyMap from "../../components/MyMap";
+import { MyAppBar, MyDrawer, MyMap } from "../../components";
 
-const drawerWidth = 280;
 const appBarHeight = 60;
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -196,42 +174,13 @@ const Home = () => {
           _handleDrawerToggle();
         }}
       />
-      <AppBar position="fixed" className={classes.appBar}>
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={_handleDrawerToggle}
-            className={classes.menuButton}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Grid container xs={12}>
-            <Autocomplete
-              options={predictions}
-              getOptionLabel={(option) => option.description}
-              className={classes.autocompleteInput}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  placeholder="Search Places"
-                  variant="outlined"
-                  className={classes.input}
-                  size="small"
-                />
-              )}
-              onInputChange={_onInputChange}
-              onChange={_onChange}
-            />
-          </Grid>
-        </Toolbar>
-      </AppBar>
-      <Grid
-        container
-        xs={12}
-        style={{ backgroundColor: "#000", paddingTop: appBarHeight }}
-      >
+      <MyAppBar
+        onInputChange={_onInputChange}
+        onChange={_onChange}
+        predictions={predictions}
+        onClickIcon={_handleDrawerToggle}
+      />
+      <Grid container xs={12} style={{ paddingTop: 0 }}>
         {loading && (
           <div
             style={{
