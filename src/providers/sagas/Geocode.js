@@ -1,6 +1,6 @@
-import { all, put, takeLatest, call, select, take } from "redux-saga/effects";
+import { all, put, takeLatest, call } from "redux-saga/effects";
 import DataService from "../../services/DataService";
-import { actions, geocodeError, geocodeSuccess } from "../actions/Geocode";
+import { actions, geocodeSuccess } from "../actions/Geocode";
 
 const getGeocode = async (id) => {
   return DataService.getLocationById(id);
@@ -14,12 +14,8 @@ function* sagaGetGeocode(action) {
       const { geometry } = data?.results[0];
       yield put(geocodeSuccess(geometry?.location));
     }
-  } catch (e) {
-    yield put(
-      geocodeError({
-        name: `Error :: ${e}`,
-      })
-    );
+  } catch (err) {
+    console.log("Geocode - sagaGetGeocode - error :: ", err);
   }
 }
 

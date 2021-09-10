@@ -2,7 +2,6 @@ import { actions } from "../actions/Geocode";
 
 const initialState = {
   success: false,
-  errors: {},
   data: [],
 };
 
@@ -18,12 +17,6 @@ const geocodeReducer = (state = initialState, action) => {
         ...state,
         success: true,
         data: action.payload,
-      };
-    case actions.GEOCODE.ERROR:
-      return {
-        ...state,
-        success: false,
-        errors: action.payload,
       };
     case actions.RESET:
       return { ...initialState };

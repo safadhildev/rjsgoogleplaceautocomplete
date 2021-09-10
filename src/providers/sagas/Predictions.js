@@ -1,11 +1,6 @@
 /* eslint-disable no-undef */
-import { all, put, takeLatest, call, select, take } from "redux-saga/effects";
-import DataService from "../../services/DataService";
-import {
-  actions,
-  predictionsError,
-  predictionsSuccess,
-} from "../actions/Predictions";
+import { all, put, takeLatest, call } from "redux-saga/effects";
+import { actions, predictionsSuccess } from "../actions/Predictions";
 
 const getPredictions = async (search) => {
   const service = new google.maps.places.AutocompleteService();
@@ -19,12 +14,8 @@ function* sagaGetPredictions(action) {
     if (predictions) {
       yield put(predictionsSuccess(predictions));
     }
-  } catch (e) {
-    yield put(
-      predictionsError({
-        name: `Error :: ${e}`,
-      })
-    );
+  } catch (err) {
+    console.log("Predictions - sagaGetPredictions - err :: ", err);
   }
 }
 

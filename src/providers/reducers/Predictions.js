@@ -2,7 +2,6 @@ import { actions } from "../actions/Predictions";
 
 const initialState = {
   success: false,
-  errors: {},
   data: [],
 };
 
@@ -18,12 +17,6 @@ const predictionsReducer = (state = initialState, action) => {
         ...state,
         success: true,
         data: action.payload,
-      };
-    case actions.PREDICTIONS.ERROR:
-      return {
-        ...state,
-        success: false,
-        errors: action.payload,
       };
     case actions.RESET:
       return { ...initialState };
