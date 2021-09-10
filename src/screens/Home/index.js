@@ -3,8 +3,10 @@ import React, { useEffect, useState } from "react";
 import {
   Card,
   CircularProgress,
+  Fade,
   Grid,
   makeStyles,
+  Paper,
   Typography,
 } from "@material-ui/core";
 import DataService from "../../services/DataService";
@@ -48,6 +50,15 @@ const useStyles = makeStyles((theme) => ({
   locationButton: {
     backgroundColor: "#FFF",
   },
+  paper: {
+    width: 100,
+    height: 200,
+  },
+  popupText: {
+    fontSize: 12,
+    color: "#607D8B",
+  },
+  fade: { position: "absolute", zIndex: 2, left: 10, top: 80 },
 }));
 
 const Home = () => {
@@ -60,6 +71,7 @@ const Home = () => {
   const [centerMap, setCenterMap] = useState({ lat: 0, lng: 0 });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [selected, setSelected] = useState(null);
 
   const { predictions, location } = useSelector((state) => ({
     predictions: state.predictionsReducer.data,
@@ -82,7 +94,10 @@ const Home = () => {
   const _onSearchGeocode = async (item) => {
     try {
       setLoading(true);
-      if (item) dispatch(geocodeRequest(item.place_id));
+      if (item) {
+        dispatch(geocodeRequest(item.place_id));
+        setSelected(item);
+      }
     } catch (err) {
       setError({ err });
       console.log("Home - onSearchGeocode - error :: ", err);
@@ -160,6 +175,7 @@ const Home = () => {
 
   const _onSelectItem = (item) => {
     setSearch(item.description);
+    setSelected(item);
     _onSearchGeocode(item);
     _handleDrawerToggle();
   };
@@ -179,6 +195,7 @@ const Home = () => {
   };
 
   useEffect(() => {
+    console.log({ location });
     setMarkerPosition(location);
     setCenterMap(location);
   }, [location]);
@@ -188,8 +205,17 @@ const Home = () => {
   }, [search]);
 
   useEffect(() => {
+    if (selected)
+      setTimeout(() => {
+        setSelected(null);
+      }, 5000);
+  }, [selected]);
+
+  useEffect(() => {
     _onGetCurrentLocation();
   }, []);
+
+  console.log({ selected });
 
   return (
     <Grid container xs={12} style={{ height: "100vh" }}>
@@ -201,6 +227,33 @@ const Home = () => {
         }}
         message={`Error : ${error}`}
       />
+
+      {selected && (
+        <Card
+          style={{
+            position: "absolute",
+            zIndex: 3,
+            top: 80,
+            right: 10,
+            backgroundColor: "#FFF",
+            padding: "10px 20px",
+            width: 200,
+            minHeight: 40,
+            borderRadius: 10,
+          }}
+          onClick={() => {
+            setSelected(null);
+          }}
+        >
+          <Typography className={classes.popupText}>
+            Searched for: {selected?.description}
+          </Typography>
+          <Typography className={classes.popupText}>
+            located at: {location?.lat}, {location?.lng}{" "}
+          </Typography>
+        </Card>
+      )}
+
       <MyDrawer
         open={openDrawer}
         onClose={() => {
@@ -249,22 +302,6 @@ const Home = () => {
           onChangeMarkerPosition={_onChangeMarkerPosition}
         />
       </Grid>
-      <div
-        style={{
-          position: "fixed",
-          display: "flex",
-          bottom: -10,
-          left: 0,
-          right: 0,
-          justifyContent: "center",
-        }}
-      >
-        <Grid container xs={8} md={3}>
-          <Card style={{ height: 20, padding: "5px 30px" }}>
-            <Typography>History</Typography>
-          </Card>
-        </Grid>
-      </div>
     </Grid>
   );
 };
