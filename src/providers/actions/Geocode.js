@@ -20,8 +20,3 @@ export const geocodeSuccess = (data) => ({
   type: actions.GEOCODE.SUCCESS,
   payload: data,
 });
-
-export const geocodeError = (errors) => ({
-  type: actions.GEOCODE.ERROR,
-  payload: errors,
-});

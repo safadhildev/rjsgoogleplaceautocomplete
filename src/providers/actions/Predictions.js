@@ -20,8 +20,3 @@ export const predictionsSuccess = (data) => ({
   type: actions.PREDICTIONS.SUCCESS,
   payload: data,
 });
-
-export const predictionsError = (errors) => ({
-  type: actions.PREDICTIONS.ERROR,
-  payload: errors,
-});
