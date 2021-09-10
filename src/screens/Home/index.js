@@ -67,8 +67,14 @@ const Home = () => {
   const [search, setSearch] = useState("");
   const [openDrawer, setOpenDrawer] = useState(false);
   const [history, setHistory] = useState([]);
-  const [markerPosition, setMarkerPosition] = useState({ lat: 0, lng: 0 });
-  const [centerMap, setCenterMap] = useState({ lat: 0, lng: 0 });
+  const [markerPosition, setMarkerPosition] = useState({
+    lat: 2.725889,
+    lng: 101.9378239,
+  });
+  const [centerMap, setCenterMap] = useState({
+    lat: 2.725889,
+    lng: 101.9378239,
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [selected, setSelected] = useState(null);
@@ -195,7 +201,6 @@ const Home = () => {
   };
 
   useEffect(() => {
-    console.log({ location });
     setMarkerPosition(location);
     setCenterMap(location);
   }, [location]);
@@ -214,8 +219,6 @@ const Home = () => {
   useEffect(() => {
     _onGetCurrentLocation();
   }, []);
-
-  console.log({ selected });
 
   return (
     <Grid container xs={12} style={{ height: "100vh" }}>
