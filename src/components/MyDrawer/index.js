@@ -20,18 +20,16 @@ import {
 } from "@material-ui/icons";
 
 const drawerWidth = 380;
-const mobileWidth = 280;
+const mobileWidth = 300;
 const radius = 20;
 
 const useStyles = makeStyles((theme) => ({
   drawerPaper: {
     width: drawerWidth,
-    // backgroundColor: "#FFF",
-    margin: "0 10px",
-    backgroundColor: "transparent",
+    backgroundColor: "#FFF",
     boxShadow: "none",
-    borderRadius: 10,
-    borderBottomLeftRadius: 30,
+    borderTopRightRadius: radius,
+    borderBottomRightRadius: radius,
     [theme.breakpoints.down("xs")]: {
       width: mobileWidth,
       flexShrink: 0,
@@ -76,7 +74,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#ECEFF1",
     borderRadius: radius,
     padding: 5,
-    marginTop: 20,
+    margin: "20px 0 40px 0",
     height: 200,
     justifyContent: "center",
     alignItems: "center",
@@ -131,139 +129,114 @@ const MyDrawer = ({
         keepMounted: true,
       }}
     >
-      <div className={classes.drawerWrapper}>
-        <div style={{ display: "flex", justifyContent: "flex-end" }}></div>
-
-        <Card
+      <div style={{ padding: "10px 20px" }}>
+        <div
           style={{
-            margin: "10px 0",
-            padding: "15px",
-            borderRadius: radius,
+            display: "flex",
+            justifyContent: "flex-end",
           }}
         >
           <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              margin: "10px 0",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flex: 1,
-              }}
-            >
-              <Typography variant="p" className={classes.title}>
-                Places Autocomplete
-              </Typography>
-              <Typography variant="p" className={classes.description}>
-                Created by Syed Ahmad Fadhil Bin Syed Hassan
-              </Typography>
-            </div>
-            <IconButton
-              onClick={onClose}
-              style={{ width: 35, height: 35, margin: "-5px -10 0 0" }}
-            >
-              <ArrowBackIos />
-            </IconButton>
-          </div>
-
-          <Button
-            variant="contained"
-            fullWidth
-            className={classes.locationButton}
-            onClick={onGetCurrentLocation}
-          >
-            Get My Current Location
-          </Button>
-        </Card>
-
-        <Card
-          style={{
-            margin: "20px 0",
-            padding: "15px",
-            borderRadius: radius,
-            flex: 1,
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Typography variant="p" className={classes.drawerSubtitle}>
-              Recent
-            </Typography>
-            <Button
-              variant="outlined"
-              size="small"
-              className={classes.clearButton}
-              onClick={onClearHistory}
-              disabled={data?.length === 0}
-            >
-              Clear All
-            </Button>
-          </div>
-
-          <List
             style={{
               display: "flex",
               flexDirection: "column",
               flex: 1,
-              overflow: "scroll",
             }}
           >
-            {data?.length > 0 ? (
-              data?.map((item, index) => (
-                <ListItem className={classes.item}>
-                  <div
-                    style={{
-                      flex: 1,
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                    }}
-                  >
-                    <Typography
-                      noWrap
-                      className={classes.itemText}
-                      onClick={() => {
-                        onSelectItem(item);
-                      }}
-                    >
-                      {item?.description}
-                    </Typography>
-                  </div>
-                  <IconButton
-                    onClick={() => {
-                      onRemoveItem(index);
-                    }}
-                  >
-                    <Close />
-                  </IconButton>
-                </ListItem>
-              ))
-            ) : (
-              <div className={classes.emptyWrapper}>
-                <Typography variant="p" className={classes.emptyText}>
-                  No Item
-                </Typography>
-              </div>
-            )}
-          </List>
-        </Card>
+            <Typography variant="p" className={classes.title}>
+              Places Autocomplete
+            </Typography>
+            <Typography variant="p" className={classes.description}>
+              Created by Syed Ahmad Fadhil Bin Syed Hassan
+            </Typography>
+          </div>
+          <IconButton
+            onClick={onClose}
+            style={{ width: 35, height: 35, margin: "-5px -10 0 0" }}
+          >
+            <ArrowBackIos />
+          </IconButton>
+        </div>
+
+        <Button
+          variant="contained"
+          fullWidth
+          className={classes.locationButton}
+          onClick={onGetCurrentLocation}
+        >
+          Get My Current Location
+        </Button>
       </div>
-      {/* <div
-        style={{
-          height: "100%",
-          backgroundColor: "transparent",
-          width: "100%",
-        }}
-        onClick={onClose}
-      ></div> */}
+
+      <Divider style={{ margin: "20px 0" }} />
+
+      <div style={{ padding: "10px 20px" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <Typography variant="p" className={classes.drawerSubtitle}>
+            Recent
+          </Typography>
+          <Button
+            variant="outlined"
+            size="small"
+            className={classes.clearButton}
+            onClick={onClearHistory}
+            disabled={data?.length === 0}
+          >
+            Clear All
+          </Button>
+        </div>
+
+        <List
+          style={{
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          {data?.length > 0 ? (
+            data?.map((item, index) => (
+              <ListItem className={classes.item}>
+                <div
+                  style={{
+                    flex: 1,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  <Typography
+                    noWrap
+                    className={classes.itemText}
+                    onClick={() => {
+                      onSelectItem(item);
+                    }}
+                  >
+                    {item?.description}
+                  </Typography>
+                </div>
+                <IconButton
+                  onClick={() => {
+                    onRemoveItem(index);
+                  }}
+                >
+                  <Close />
+                </IconButton>
+              </ListItem>
+            ))
+          ) : (
+            <div className={classes.emptyWrapper}>
+              <Typography variant="p" className={classes.emptyText}>
+                No Item
+              </Typography>
+            </div>
+          )}
+        </List>
+      </div>
     </SwipeableDrawer>
   );
 };

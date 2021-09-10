@@ -7,6 +7,9 @@ import { MyAppBar, MyDrawer, MyMap } from "../../components";
 import { geocodeRequest } from "../../providers/actions/Geocode";
 
 const appBarHeight = 60;
+const drawerWidth = 380;
+const mobileWidth = 300;
+
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
@@ -189,11 +192,6 @@ const Home = () => {
             <CircularProgress color="primary" />
           </div>
         )}
-        <MyMap
-          center={centerMap}
-          markerPosition={markerPosition}
-          onChangeMarkerPosition={_onChangeMarkerPosition}
-        />
       </Grid>
     </Grid>
   );
