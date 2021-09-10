@@ -1,34 +1,40 @@
 import React from "react";
 import {
   Button,
+  Card,
   Divider,
   Drawer,
   IconButton,
   List,
   ListItem,
   makeStyles,
+  SwipeableDrawer,
   Typography,
 } from "@material-ui/core";
-import { Close, Menu } from "@material-ui/icons";
+import {
+  ArrowBack,
+  ArrowBackIos,
+  ChevronLeft,
+  Close,
+  Menu,
+} from "@material-ui/icons";
 
 const drawerWidth = 380;
 const mobileWidth = 280;
+const radius = 20;
+
 const useStyles = makeStyles((theme) => ({
   drawerPaper: {
     width: drawerWidth,
-    backgroundColor: "#FFF",
-    // backgroundColor: "transparent",
+    // backgroundColor: "#FFF",
+    margin: "0 10px",
+    backgroundColor: "transparent",
     boxShadow: "none",
-    margin: "10px",
-    height: window.innerHeight - 20,
     borderRadius: 10,
-    paddingLeft: 20,
-    paddingRight: 20,
+    borderBottomLeftRadius: 30,
     [theme.breakpoints.down("xs")]: {
       width: mobileWidth,
       flexShrink: 0,
-      paddingLeft: 10,
-      paddingRight: 10,
     },
   },
   drawerWrapper: {
@@ -51,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
 
   itemText: {
     fontSize: 14,
-    color: "#78909C",
+    color: "#607D8B",
     cursor: "pointer",
     textOverflow: "ellipsis",
   },
@@ -68,10 +74,10 @@ const useStyles = makeStyles((theme) => ({
   emptyWrapper: {
     display: "flex",
     backgroundColor: "#ECEFF1",
-    borderRadius: 5,
+    borderRadius: radius,
     padding: 5,
-    marginTop: 10,
-    height: 100,
+    marginTop: 20,
+    height: 200,
     justifyContent: "center",
     alignItems: "center",
     textAlign: "center",
@@ -81,9 +87,10 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 14,
   },
   locationButton: {
+    margin: "20px 0 0 0",
     background: "#212121",
     color: "#FFF",
-    borderRadius: 10,
+    borderRadius: radius,
     textTransform: "capitalize",
     "&:hover": {
       background: "#212121",
@@ -92,7 +99,7 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     fontWeight: "bold",
-    fontSize: 16,
+    fontSize: 18,
   },
   description: {
     fontSize: 12,
@@ -112,7 +119,7 @@ const MyDrawer = ({
   const classes = useStyles();
 
   return (
-    <Drawer
+    <SwipeableDrawer
       variant="temporary"
       anchor="left"
       open={open}
@@ -125,18 +132,44 @@ const MyDrawer = ({
       }}
     >
       <div className={classes.drawerWrapper}>
-        <div
-          style={{ margin: "20px 0", display: "flex", flexDirection: "column" }}
+        <div style={{ display: "flex", justifyContent: "flex-end" }}></div>
+
+        <Card
+          style={{
+            margin: "10px 0",
+            padding: "15px",
+            borderRadius: radius,
+          }}
         >
-          <Typography variant="p" className={classes.title}>
-            Places Autocomplete
-          </Typography>
-          <Typography variant="p" className={classes.description}>
-            Created by Syed Ahmad Fadhil Bin Syed Hassan
-          </Typography>
-        </div>
-        <Divider />
-        <div style={{ margin: "20px 0" }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              margin: "10px 0",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                flex: 1,
+              }}
+            >
+              <Typography variant="p" className={classes.title}>
+                Places Autocomplete
+              </Typography>
+              <Typography variant="p" className={classes.description}>
+                Created by Syed Ahmad Fadhil Bin Syed Hassan
+              </Typography>
+            </div>
+            <IconButton
+              onClick={onClose}
+              style={{ width: 35, height: 35, margin: "-5px -10 0 0" }}
+            >
+              <ArrowBackIos />
+            </IconButton>
+          </div>
+
           <Button
             variant="contained"
             fullWidth
@@ -145,77 +178,93 @@ const MyDrawer = ({
           >
             Get My Current Location
           </Button>
-        </div>
-        <Divider />
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginTop: 30,
-            alignItems: "center",
-          }}
-        >
-          <Typography variant="p" className={classes.drawerSubtitle}>
-            Recent
-          </Typography>
-          <Button
-            variant="outlined"
-            size="small"
-            className={classes.clearButton}
-            onClick={onClearHistory}
-            disabled={data?.length === 0}
-          >
-            Clear All
-          </Button>
-        </div>
+        </Card>
 
-        <List
+        <Card
           style={{
-            display: "flex",
-            flexDirection: "column",
+            margin: "20px 0",
+            padding: "15px",
+            borderRadius: radius,
             flex: 1,
-            overflow: "scroll",
           }}
         >
-          {data?.length > 0 ? (
-            data?.map((item, index) => (
-              <ListItem className={classes.item}>
-                <div
-                  style={{
-                    flex: 1,
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                >
-                  <Typography
-                    noWrap
-                    className={classes.itemText}
-                    onClick={() => {
-                      onSelectItem(item);
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Typography variant="p" className={classes.drawerSubtitle}>
+              Recent
+            </Typography>
+            <Button
+              variant="outlined"
+              size="small"
+              className={classes.clearButton}
+              onClick={onClearHistory}
+              disabled={data?.length === 0}
+            >
+              Clear All
+            </Button>
+          </div>
+
+          <List
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              flex: 1,
+              overflow: "scroll",
+            }}
+          >
+            {data?.length > 0 ? (
+              data?.map((item, index) => (
+                <ListItem className={classes.item}>
+                  <div
+                    style={{
+                      flex: 1,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
                     }}
                   >
-                    {item?.description}
-                  </Typography>
-                </div>
-                <IconButton
-                  onClick={() => {
-                    onRemoveItem(index);
-                  }}
-                >
-                  <Close />
-                </IconButton>
-              </ListItem>
-            ))
-          ) : (
-            <div className={classes.emptyWrapper}>
-              <Typography variant="p" className={classes.emptyText}>
-                No Item
-              </Typography>
-            </div>
-          )}
-        </List>
+                    <Typography
+                      noWrap
+                      className={classes.itemText}
+                      onClick={() => {
+                        onSelectItem(item);
+                      }}
+                    >
+                      {item?.description}
+                    </Typography>
+                  </div>
+                  <IconButton
+                    onClick={() => {
+                      onRemoveItem(index);
+                    }}
+                  >
+                    <Close />
+                  </IconButton>
+                </ListItem>
+              ))
+            ) : (
+              <div className={classes.emptyWrapper}>
+                <Typography variant="p" className={classes.emptyText}>
+                  No Item
+                </Typography>
+              </div>
+            )}
+          </List>
+        </Card>
       </div>
-    </Drawer>
+      {/* <div
+        style={{
+          height: "100%",
+          backgroundColor: "transparent",
+          width: "100%",
+        }}
+        onClick={onClose}
+      ></div> */}
+    </SwipeableDrawer>
   );
 };
 

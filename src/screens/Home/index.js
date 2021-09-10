@@ -65,7 +65,6 @@ const Home = () => {
 
   const _onSearchGeocode = async (item) => {
     try {
-      console.log({ item });
       dispatch(geocodeRequest(item.place_id));
     } catch (error) {
       console.log("Home - onSearchGeocode - error :: ", error);
@@ -96,6 +95,7 @@ const Home = () => {
   };
 
   const _onSelectItem = (item) => {
+    setSearch(item.description);
     _onSearchGeocode(item);
     _handleDrawerToggle();
   };
@@ -168,6 +168,7 @@ const Home = () => {
         onChange={_onChange}
         predictions={predictions}
         onClickIcon={_handleDrawerToggle}
+        value={search}
       />
       <Grid container xs={12} style={{ paddingTop: 0 }}>
         {loading && (

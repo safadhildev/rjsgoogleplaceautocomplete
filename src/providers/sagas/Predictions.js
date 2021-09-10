@@ -6,15 +6,12 @@ import {
   predictionsSuccess,
 } from "../actions/Predictions";
 
-const getPredictions = async (search) => {
-  console.log("getPredictions :: ", search)
-  return DataService.getPredictions(search);
-};
+const getPredictions = async (search) => DataService.getPredictions(search);
 
 function* sagaGetPredictions(action) {
   try {
     const response = yield call(getPredictions, action.value);
-    console.log({ response });
+
     const { data, status } = response;
     if (status === 200) {
       yield put(predictionsSuccess(data.predictions));

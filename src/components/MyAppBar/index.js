@@ -55,7 +55,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const MyAppBar = ({ onClickIcon, predictions, onInputChange, onChange }) => {
+const MyAppBar = ({
+  onClickIcon,
+  predictions,
+  onInputChange,
+  onChange,
+  value,
+}) => {
   const classes = useStyles();
   return (
     <AppBar position="fixed" className={classes.appBar}>
@@ -73,18 +79,22 @@ const MyAppBar = ({ onClickIcon, predictions, onInputChange, onChange }) => {
           <Grid item xs={11} md={6}>
             <Autocomplete
               freeSolo
+              inputValue={value}
               options={predictions}
               getOptionLabel={(option) => option.description}
               className={classes.autocompleteInput}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  variant="standard"
-                  placeholder="Search Places"
-                  size="small"
-                  className={classes.input}
-                />
-              )}
+              renderInput={(params) => {
+                return (
+                  <TextField
+                    {...params}
+                    variant="standard"
+                    placeholder="Search Places"
+                    size="small"
+                    className={classes.input}
+                    value={value}
+                  />
+                );
+              }}
               onInputChange={onInputChange}
               onChange={onChange}
             />

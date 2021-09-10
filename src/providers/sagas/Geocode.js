@@ -7,7 +7,6 @@ const getGeocode = async (id) => {
 };
 
 function* sagaGetGeocode(action) {
-  console.log({ action });
   try {
     const response = yield call(getGeocode, action.value);
     const { data, status } = response;
