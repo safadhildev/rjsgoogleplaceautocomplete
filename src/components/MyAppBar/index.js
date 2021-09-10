@@ -10,7 +10,7 @@ import {
   TextField,
   Toolbar,
 } from "@material-ui/core";
-import { Menu as MenuIcon } from "@material-ui/icons";
+import { Menu as MenuIcon, MyLocation } from "@material-ui/icons";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import DataService from "../../services/DataService";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,36 +19,36 @@ import { MyDrawer, MyMap } from "../../components";
 
 const appBarHeight = 60;
 const useStyles = makeStyles((theme) => ({
-  appBar: {
+  appBarContainer: {
     height: appBarHeight,
-    justifyContent: "center",
-    // backgroundColor: "#212121",
     backgroundColor: "transparent",
     boxShadow: "none",
+    [theme.breakpoints.up("sm")]: {
+      padding: 10,
+    },
   },
-
+  appBarWrapper: {
+    justifyContent: "center",
+    backgroundColor: "#212121",
+    [theme.breakpoints.up("sm")]: {
+      borderRadius: 10,
+    },
+  },
   menuButton: {
-    backgroundColor: "#FFF",
+    // backgroundColor: "#FFF",
     width: 40,
     height: 40,
-    margin: "0 10px 0 0",
-    boxShadow: "0px 1px 10px #888888",
+    // boxShadow: "0px 1px 10px #888888",
     border: "none",
-    "&:hover": {
-      backgroundColor: "#212121",
-      color: "#FFF",
-    },
+    color: "#FFF",
   },
   toolbar: theme.mixins.toolbar,
   autocompleteInput: {
     textAlign: "center",
-    backgroundColor: "#FFF",
-    borderRadius: 20,
+    backgroundColor: "#ECEFF1",
+    borderRadius: 10,
     padding: "5px 20px",
-    boxShadow: "0px 1px 10px #888888",
-    [theme.breakpoints.down("xs")]: {
-      margin: "0 0 0 30px",
-    },
+    // boxShadow: "0px 1px 10px #888888",
   },
   locationButton: {
     backgroundColor: "#FFF",
@@ -65,19 +65,19 @@ const MyAppBar = ({
 }) => {
   const classes = useStyles();
   return (
-    <AppBar position="fixed" className={classes.appBar}>
-      <Toolbar>
-        <Grid container direction="row" justifyContent="flex-start">
+    <AppBar position="fixed" className={classes.appBarContainer}>
+      <Toolbar className={classes.appBarWrapper}>
+        <Grid container direction="row" justifyContent="flex-start" spacing={8}>
           <Grid item xs={1}>
             <IconButton
-              edge="start"
+              edge="end"
               onClick={onClickIcon}
               className={classes.menuButton}
             >
               <MenuIcon />
             </IconButton>
           </Grid>
-          <Grid item xs={11} md={6}>
+          <Grid item xs={10} md={6} justifyContent="flex-start">
             <Autocomplete
               freeSolo
               // autoComplete

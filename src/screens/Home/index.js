@@ -1,10 +1,16 @@
 /* eslint-disable no-undef */
 import React, { useEffect, useState } from "react";
-import { CircularProgress, Grid, makeStyles } from "@material-ui/core";
+import {
+  Card,
+  CircularProgress,
+  Grid,
+  makeStyles,
+  Typography,
+} from "@material-ui/core";
 import DataService from "../../services/DataService";
 import { useDispatch, useSelector } from "react-redux";
 import { predictionsRequest } from "../../providers/actions/Predictions";
-import { MyAppBar, MyDrawer, MyMap } from "../../components";
+import { MyAppBar, MyDrawer, MyMap, MySnackbar } from "../../components";
 import { geocodeRequest } from "../../providers/actions/Geocode";
 
 const appBarHeight = 60;
@@ -53,6 +59,7 @@ const Home = () => {
   const [markerPosition, setMarkerPosition] = useState({ lat: 0, lng: 0 });
   const [centerMap, setCenterMap] = useState({ lat: 0, lng: 0 });
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   const { predictions, location } = useSelector((state) => ({
     predictions: state.predictionsReducer.data,
@@ -62,31 +69,81 @@ const Home = () => {
   const _onSearch = async () => {
     try {
       setLoading(true);
-      await dispatch(predictionsRequest(search));
-      setLoading(false);
+      dispatch(predictionsRequest(search));
     } catch (err) {
       setLoading(false);
+      setError({ err });
       console.log("Home - onSearch - error :: ", err);
+    } finally {
+      setLoading(false);
     }
   };
 
   const _onSearchGeocode = async (item) => {
     try {
+      setLoading(true);
       if (item) dispatch(geocodeRequest(item.place_id));
-    } catch (error) {
-      console.log("Home - onSearchGeocode - error :: ", error);
+    } catch (err) {
+      setError({ err });
+      console.log("Home - onSearchGeocode - error :: ", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const _onPredictAndSelectPlace = async (value) => {
+    try {
+      setLoading(true);
+      const service = new google.maps.places.AutocompleteService();
+      const response = await service.getPlacePredictions({ input: value });
+      const { predictions: results } = response;
+      if (response) {
+        dispatch(geocodeRequest(results[0].place_id));
+      }
+    } catch (err) {
+      setError({ err });
+      console.log("Home - _onPredictAndSelect - error :: ", { err });
+    } finally {
+      setLoading(false);
     }
   };
 
   const _onChange = async (event, item) => {
     try {
+      setLoading(true);
       if (typeof item === "object") {
         setHistory([item, ...history]);
         _onSearchGeocode(item);
+      } else {
+        // it is a search value
+        _onPredictAndSelectPlace(item);
       }
     } catch (err) {
+      setError({ err });
       console.log("Home - handleAutocompleteChange - error ", err);
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const _onGetCurrentLocation = async () => {
+    try {
+      setLoading(true);
+      navigator.geolocation.getCurrentPosition(_handleGetCurrentLocation);
+    } catch (err) {
+      setLoading(false);
+      setError({ err });
+      console.log({ err });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const _onChangeMarkerPosition = (latLng) => {
+    setMarkerPosition({
+      lat: latLng.lat(),
+      lng: latLng.lng(),
+    });
   };
 
   const _onInputChange = (e, value) => {
@@ -118,27 +175,7 @@ const Home = () => {
     };
     setMarkerPosition(currentPosition);
     setCenterMap(currentPosition);
-
     setLoading(false);
-  };
-
-  const _onGetCurrentLocation = async () => {
-    try {
-      setLoading(true);
-      navigator.geolocation.getCurrentPosition(_handleGetCurrentLocation);
-    } catch (err) {
-      setLoading(false);
-      console.log({ err });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const _onChangeMarkerPosition = (latLng) => {
-    setMarkerPosition({
-      lat: latLng.lat(),
-      lng: latLng.lng(),
-    });
   };
 
   useEffect(() => {
@@ -156,6 +193,14 @@ const Home = () => {
 
   return (
     <Grid container xs={12} style={{ height: "100vh" }}>
+      <MySnackbar
+        isOpen={error}
+        severity="error"
+        onClose={() => {
+          setError(null);
+        }}
+        message={`Error : ${error}`}
+      />
       <MyDrawer
         open={openDrawer}
         onClose={() => {
@@ -204,6 +249,22 @@ const Home = () => {
           onChangeMarkerPosition={_onChangeMarkerPosition}
         />
       </Grid>
+      <div
+        style={{
+          position: "fixed",
+          display: "flex",
+          bottom: -10,
+          left: 0,
+          right: 0,
+          justifyContent: "center",
+        }}
+      >
+        <Grid container xs={8} md={3}>
+          <Card style={{ height: 20, padding: "5px 30px" }}>
+            <Typography>History</Typography>
+          </Card>
+        </Grid>
+      </div>
     </Grid>
   );
 };
