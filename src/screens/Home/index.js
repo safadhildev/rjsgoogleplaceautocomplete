@@ -166,6 +166,7 @@ const Home = () => {
           _handleDrawerToggle();
         }}
       />
+
       <MyAppBar
         onInputChange={_onInputChange}
         onChange={_onChange}
@@ -192,6 +193,11 @@ const Home = () => {
             <CircularProgress color="primary" />
           </div>
         )}
+        <MyMap
+          center={centerMap}
+          markerPosition={markerPosition}
+          onChangeMarkerPosition={_onChangeMarkerPosition}
+        />
       </Grid>
     </Grid>
   );
