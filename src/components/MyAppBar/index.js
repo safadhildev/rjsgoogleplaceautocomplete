@@ -61,6 +61,7 @@ const MyAppBar = ({
   onInputChange,
   onChange,
   value,
+  loading,
 }) => {
   const classes = useStyles();
   return (
@@ -79,9 +80,12 @@ const MyAppBar = ({
           <Grid item xs={11} md={6}>
             <Autocomplete
               freeSolo
+              // autoComplete
+              autoSelect={predictions.length > 0}
+              loading={loading || predictions.length === 0}
               inputValue={value}
               options={predictions}
-              getOptionLabel={(option) => option.description}
+              getOptionLabel={(option) => option.description || ""}
               className={classes.autocompleteInput}
               renderInput={(params) => {
                 return (

@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import React, { useEffect, useState } from "react";
 import { CircularProgress, Grid, makeStyles } from "@material-ui/core";
 import DataService from "../../services/DataService";
@@ -60,15 +61,18 @@ const Home = () => {
 
   const _onSearch = async () => {
     try {
-      dispatch(predictionsRequest(search));
+      setLoading(true);
+      await dispatch(predictionsRequest(search));
+      setLoading(false);
     } catch (err) {
+      setLoading(false);
       console.log("Home - onSearch - error :: ", err);
     }
   };
 
   const _onSearchGeocode = async (item) => {
     try {
-      dispatch(geocodeRequest(item.place_id));
+      if (item) dispatch(geocodeRequest(item.place_id));
     } catch (error) {
       console.log("Home - onSearchGeocode - error :: ", error);
     }
@@ -76,7 +80,7 @@ const Home = () => {
 
   const _onChange = async (event, item) => {
     try {
-      if (item) {
+      if (typeof item === "object") {
         setHistory([item, ...history]);
         _onSearchGeocode(item);
       }
@@ -173,6 +177,7 @@ const Home = () => {
         predictions={predictions}
         onClickIcon={_handleDrawerToggle}
         value={search}
+        loading={loading}
       />
       <Grid container xs={12} style={{ paddingTop: 0 }}>
         {loading && (
